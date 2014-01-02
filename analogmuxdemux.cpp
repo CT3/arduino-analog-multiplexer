@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "analogmuxdemux.h"
-
+#include "IOshield.h"
 // parts adapted from elements at: http://tomekness.files.wordpress.com/2007/02/analog_multiplexer_demultiplexer_4051.pdf
 
 AnalogMux::AnalogMux(uint8_t MS0, uint8_t MS1, uint8_t MS2, uint8_t readpin){
@@ -16,6 +16,7 @@ AnalogMux::AnalogMux(uint8_t MS0, uint8_t MS1, uint8_t MS2, uint8_t SS0, uint8_t
     SetupMaster(MS0, MS1, MS2, readpin);
     
     // now set the additional pins and vars for the slave chips
+     IO.portMode(2, 0b0000000000000000);
     pinMode(SS0, OUTPUT);
     pinMode(SS1, OUTPUT);
     pinMode(SS2, OUTPUT);
@@ -38,7 +39,7 @@ AnalogMux::AnalogMux(uint8_t readpin){
 
 void AnalogMux::SetupMaster(uint8_t MS0, uint8_t MS1, uint8_t MS2, uint8_t readpin) {
     // reusable set up method for the master chip.
-    
+         IO.portMode(2, 0b0000000000000000);
     pinMode(MS0, OUTPUT);
     pinMode(MS1, OUTPUT);
     pinMode(MS2, OUTPUT);
@@ -88,7 +89,7 @@ uint16_t AnalogMux::AnalogRead(uint8_t pin) {
 
 
 AnalogDeMux::AnalogDeMux(uint8_t MS0, uint8_t MS1, uint8_t MS2, uint8_t writepin){
-
+     IO.portMode(2, 0b0000000000000000);
   pinMode(MS0, OUTPUT);
   pinMode(MS1, OUTPUT);
   pinMode(MS2, OUTPUT);
@@ -134,9 +135,9 @@ void AnalogDeMux::AnalogWrite(uint8_t wpin, uint8_t value) {
 // helper functions
 void WriteSelectionPins(uint8_t S0, uint8_t S1, uint8_t S2, uint8_t pin) {
 
-  digitalWrite(S0, (pin & 0x01)); // set the lowest bit
-  digitalWrite(S1, ((pin>>1) & 0x01)); // set the middle bit
-  digitalWrite(S2, ((pin>>2) & 0x01)); // set the highest bit.
+  IO.digitalWrite(S0, (pin & 0x01)); // set the lowest bit
+  IO.digitalWrite(S1, ((pin>>1) & 0x01)); // set the middle bit
+  IO.digitalWrite(S2, ((pin>>2) & 0x01)); // set the highest bit.
 
 }
 
